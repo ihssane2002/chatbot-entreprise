@@ -1,0 +1,23 @@
+# Gestion des variables d'environnement
+python-dotenv==1.0.1
+
+# Requêtes HTTP
+requests==2.31.0
+
+# Encodage de phrases / modèles Transformers
+sentence-transformers==2.2.2
+torch==2.2.0
+transformers==4.40.0
+
+# Base de données MongoDB
+pymongo==4.5.1
+gridfs==2.0.1
+
+# Qdrant client
+qdrant-client==1.1.0
+
+# Gestion de l'encodage et des calculs
+numpy==1.26.5
+
+# Optionnel mais utile pour certaines manipulations
+scipy==1.12.2
