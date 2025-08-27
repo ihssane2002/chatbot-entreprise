@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.10/dist/purify.min.js"></script>
+
+
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  background-color: #0a1e3f;
+  color: white;
+}
+
+/* Sidebar sans icônes */
+.sidebar {
+  width: 80px;
+  background-color: #091830;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 30px;
+}
+
+/* Supprimé : .sidebar i */
+
+.menu-sidebar {
+  width: 200px;
+  background-color: #0f2547;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  border-right: 1px solid #264a88;
+}
+
+.menu-sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+.menu-sidebar button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #1a3e6e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.menu-sidebar button:hover {
+  background-color: #1e90ff;
+}
+
+.main {
+  flex: 1;
+  background-color: #10294e;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #0e1f3a;
+  padding: 16px 24px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-bottom: 1px solid #264a88;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+  max-height: 90vh;
+  background-color: #0e1f3a;
+  border: 1px solid #264a88;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.chatbot-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.message-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  background-color: #1a3e6e;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+.chat-input input::placeholder {
+  color: #ccc;
+}
+
+.chat-input button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+
+.bot-message {
+  align-self: flex-end;
+  background-color: #1a3e6e;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 16px;
+  max-width: 90%;
+  text-align: right;
+  overflow: visible;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.user-message {
+  align-self: flex-start;
+  background-color: #1e90ff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 16px;
+  max-width: 90%;
+  text-align: left;
+}
+
+.footer {
+  font-size: 0.8rem;
+  color: #aaa;
+  text-align: center;
+  margin-top: 10px;
+}
+
+img {
+  border-radius: 12px;
+}
+
+/* TABLEAU markdown - amélioration visuelle */
+.bot-message table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  background-color: #13294b;
+  color: #e0e0e0;
+  border: 1px solid #2d4d7a;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bot-message th {
+  background-color: #1e3d73;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #2d4d7a;
+}
+
+.bot-message td {
+  padding: 10px;
+  border-bottom: 1px solid #2d4d7a;
+}
+
+.bot-message ul,
+.bot-message ol {
+  padding-left: 20px;
+  margin: 1em 0;
+}
+
+.bot-message li {
+  margin-bottom: 0.3em;
+}
+
+.bot-message p {
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.bot-message a {
+  color: #1e90ff;
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.bot-message a:hover {
+  color: #63b3ed;
+}
+/* Section historique des chats */
+#chat-history-list {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px solid #264a88;
+}
+
+#chat-history-list h4 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #d4e2f0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Liste des chats */
+#chat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#chat-list li {
+  padding: 10px;
+  background-color: #12294e;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #e4f1ff;
+  font-size: 0.95rem;
+  transition: background-color 0.3s, transform 0.2s;
+  border: 1px solid #1f3b65;
+}
+
+#chat-list li:hover {
+  background-color: #1e3d73;
+  transform: translateX(4px);
+  color: #ffffff;
+}
+    #data-upload-panel {
+    background-color: #f0f4fa;
+    border-radius: 10px;
+  }
+
+  #data-upload-panel input[type="file"] {
+    margin-top: 10px;
+  }
+
+  #upload-status {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <i class="fas fa-home" title="Accueil"></i>
+    <i class="fas fa-user" title="Profil"></i>
+    <i class="fas fa-database" title="Données"></i>
+    <i class="fas fa-cogs" title="Paramètres"></i>
+    <i class="fas fa-sign-out-alt" title="Déconnexion" onclick="logout()"></i>
+  </div>
+
+  <!-- Menu -->
+  <div class="menu-sidebar">
+    <div>
+      <h2>Menu</h2>
+      <button id="new-chat-btn">+ New Chat</button>
+      <button id="search-chat-btn">Search Chats</button>
+    </div>
+    <div id="chat-history-list" style="margin-top: 20px;">
+  <h4>Chats récents</h4>
+  <ul id="chat-list" style="list-style: none; padding-left: 0;"></ul>
+</div>
+
+    <div class="footer">
+      <p>© 2025</p>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="main">
+    <div class="header"></div>
+
+    <div class="content">
+      <div class="chat-container">
+        <div class="chat-header">
+          <img src="img/robot-assistant.png" alt="Chatbot Icon" class="chatbot-icon" />
+          <span>Chatbot UI</span>
+        </div>
+
+        <div class="message-box" id="message-box"></div>
+
+        <div class="chat-input">
+          <input type="text" id="user-input" placeholder="Envoyer un message..." />
+          <button title="Envoyer" id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("fullname");
+      window.location.href = "/index.html";
+    }
+
+    const input = document.getElementById("user-input");
+    const button = document.getElementById("send-button");
+    const messageBox = document.getElementById("message-box");
+    let history = [];
+     let chatSessions = []; // Liste de toutes les sessions (anciens chats)
+
+    function addToHistory(question, answer) {
+      history.push({ question, answer });
+      if (history.length > 10) history.shift();
+    }
+
+    // NEW CHAT
+    document.getElementById("new-chat-btn").addEventListener("click", () => {
+  if (history.length > 0) {
+    // Sauvegarder la session précédente dans chatSessions
+    const chatCopy = JSON.parse(JSON.stringify(history)); // Cloner proprement
+    chatSessions.push(chatCopy);
+
+    // Créer un élément visuel
+    const title = history[0]?.question?.substring(0, 30) || "Conversation";
+    const li = document.createElement("li");
+    li.textContent = title;
+    li.style.cursor = "pointer";
+    li.style.marginBottom = "5px";
+
+    // Associer le clic à l'index correspondant dans chatSessions
+    const sessionIndex = chatSessions.length - 1;
+    li.addEventListener("click", () => {
+      loadChat(chatSessions[sessionIndex]);
+    });
+
+    document.getElementById("chat-list").prepend(li);
+  }
+
+  // Nouveau chat : vide le chat actuel
+  history = [];
+  messageBox.innerHTML = "";
+
+  const welcome = document.createElement("div");
+  welcome.classList.add("bot-message");
+  welcome.textContent = "Hy ! Comment puis-je vous aider aujourd'hui ?";
+  messageBox.appendChild(welcome);
+});
+
+    // SEARCH CHAT
+    document.getElementById("search-chat-btn").addEventListener("click", () => {
+      const query = prompt("Rechercher un mot dans vos précédentes conversations :");
+      if (!query) return;
+      const found = history.find(h =>
+        h.question.toLowerCase().includes(query.toLowerCase()) ||
+        h.answer.toLowerCase().includes(query.toLowerCase())
+      );
+      if (found) {
+        alert(`Résultat trouvé :\n\nQuestion : ${found.question}\nRéponse : ${found.answer}`);
+      } else {
+        alert("Aucun résultat trouvé dans l'historique.");
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const fullname = localStorage.getItem("fullname");
+      const headerDiv = document.querySelector(".main .header");
+      headerDiv.textContent = fullname ? `Bienvenue, ${fullname}` : "Bienvenue, invité";
+
+      const welcome = document.createElement("div");
+      welcome.classList.add("bot-message");
+      welcome.textContent = "Hy ! Comment puis-je vous aider aujourd'hui ?";
+      messageBox.appendChild(welcome);
+    });
+
+    button.addEventListener("click", async () => {
+      const message = input.value.trim();
+      if (!message) return;
+
+      const userMsg = document.createElement("div");
+      userMsg.classList.add("user-message");
+      userMsg.textContent = message;
+      messageBox.appendChild(userMsg);
+
+      const botMsg = document.createElement("div");
+      botMsg.classList.add("bot-message");
+      botMsg.textContent = "Je traite votre demande...";
+      messageBox.appendChild(botMsg);
+
+      input.value = "";
+      messageBox.scrollTop = messageBox.scrollHeight;
+
+      try {
+        const response = await fetch("http://localhost:5000/api/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: message, history }),
+        });
+
+        const data = await response.json();
+        let answer = data.answer || "Pas de réponse générée.";
+
+        const formattedMsg = document.createElement("div");
+        formattedMsg.classList.add("bot-message");
+
+        // Si la réponse est un lien vers un PDF
+        if (answer.endsWith(".pdf")) {
+          const pdfLink = document.createElement("a");
+          pdfLink.href = `http://localhost:5000/static/rapports/${answer}`;
+          pdfLink.textContent = " Télécharger le document";
+          pdfLink.target = "_blank";
+          pdfLink.style.color = "#007bff";
+          pdfLink.style.textDecoration = "underline";
+          formattedMsg.appendChild(pdfLink);
+        } else {
+          // Sinon, réponse classique Markdown
+          const htmlAnswer = DOMPurify.sanitize(marked.parse(answer));
+          formattedMsg.innerHTML = htmlAnswer;
+        }
+
+        botMsg.replaceWith(formattedMsg);
+        addToHistory(message, answer);
+      } catch (error) {
+        console.error("Erreur côté client :", error);
+        botMsg.textContent = "Erreur serveur.";
+      }
+
+      messageBox.scrollTop = messageBox.scrollHeight;
+    });
+    function loadChat(chatData) {
+  messageBox.innerHTML = "";
+  for (const pair of chatData) {
+    const user = document.createElement("div");
+    user.classList.add("user-message");
+    user.textContent = pair.question;
+    messageBox.appendChild(user);
+
+    const bot = document.createElement("div");
+    bot.classList.add("bot-message");
+
+    if (pair.answer.endsWith(".pdf")) {
+      const pdfLink = document.createElement("a");
+      pdfLink.href = `http://localhost:5000/static/rapports/${pair.answer}`;
+      pdfLink.textContent = "Télécharger le document";
+      pdfLink.target = "_blank";
+      pdfLink.style.color = "#007bff";
+      pdfLink.style.textDecoration = "underline";
+      bot.appendChild(pdfLink);
+    } else {
+      bot.innerHTML = DOMPurify.sanitize(marked.parse(pair.answer));
+    }
+
+    messageBox.appendChild(bot);
+  }
+};
+    document.querySelector(".fa-database").addEventListener("click", () => {
+  document.getElementById("data-upload-panel").style.display = "block";
+});
+
+function closeUploadPanel() {
+  document.getElementById("data-upload-panel").style.display = "none";
+  document.getElementById("upload-status").textContent = "";
+}
+;
+  async function uploadPDF() {
+  const fileInput = document.getElementById("pdf-file");
+  const status = document.getElementById("upload-status");
+
+  if (!fileInput.files[0]) {
+    status.textContent = "Veuillez sélectionner un fichier PDF.";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("pdf", fileInput.files[0]);
+
+  status.textContent = "Téléversement en cours...";
+
+  try {
+    const response = await fetch("http://localhost:5000/api/upload-pdf", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      status.style.color = "green";
+      status.textContent = "Base de données mise à jour. PDF ajouté avec succès.";
+    } else {
+      status.style.color = "red";
+      status.textContent = "Erreur : " + (data.error || "inconnue.");
+    }
+  } catch (err) {
+    console.error(err);
+    status.style.color = "red";
+    status.textContent = "Erreur lors du téléversement.";
+  }
+}
+
+;
+    function displayFileName() {
+  const input = document.getElementById("pdf-file");
+  const label = document.getElementById("selected-filename");
+
+  if (input.files.length > 0) {
+    label.textContent = `Fichier sélectionné : ${input.files[0].name}`;
+  } else {
+    label.textContent = "";
+  }
+}
+;
+
+  </script>
+<!-- Fenêtre pour ajouter des données -->
+<div id="data-upload-panel" style="display: none; position: fixed; top: 10%; left: 30%; width: 40%; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 1000;">
+  <h3>Ajouter un rapport PDF</h3>
+  <input type="file" id="pdf-file" accept="application/pdf" onchange="displayFileName()" />
+<p id="selected-filename" style="font-style: italic; color: gray;"></p>
+
+
+  <br><br>
+  <button onclick="uploadPDF()">Téléverser</button>
+  <button onclick="closeUploadPanel()">Fermer</button>
+  <p id="upload-status"></p>
+</div>
+
+</body>
+
+</html>
